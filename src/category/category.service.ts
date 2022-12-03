@@ -1,26 +1,58 @@
-import { Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Paginator } from '../utils/interface'
+import { Injectable } from '@nestjs/common'
+import { PrismaService } from '../prisma/prisma.service'
+import { CreateCategoryDto } from './dto/create-category.dto'
+import { UpdateCategoryDto } from './dto/update-category.dto'
 
 @Injectable()
 export class CategoryService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
-  }
+    constructor(private prisma: PrismaService) {}
+    
+    async create(createCategoryDto: CreateCategoryDto) {
+        return await this.prisma.category.create({ data: createCategoryDto })
+    }
 
-  findAll() {
-    return `This action returns all category`;
-  }
+    async findAll(query?: Paginator) {
+        const data = await this.prisma.category.findMany({
+            take: Number(query.rows) || 10,
+            skip: Number(query.first) || 0,
+            orderBy: { created_at: 'desc' },
+            select: {
+                id: true,
+                name: true,
+                status: true,
+                popular: true,
+                publish: true,
+                image_uri: true,
+                parentCategory: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
+            }
+        })
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
-  }
+        const aggregations = await this.prisma.category.aggregate({ _count: true })
+        
+        return {
+            data,
+            aggregations
+        }
+    }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
-  }
+    async findOne(id: string) {
+        return await this.prisma.category.findUnique({ where: { id } })    
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
-  }
+    async update(id: string, updateCategoryDto: UpdateCategoryDto) {
+        return await this.prisma.category.update({
+            where: { id },
+            data: updateCategoryDto
+        })
+    }
+
+    remove(id: number) {
+        return `This action removes a #${id} category`
+    }
 }
