@@ -76,7 +76,16 @@ export class CategoryController {
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.categoryService.remove(+id)
+    async remove(
+        @Param('id') id: string,
+        @Res() res: Response
+    ) {
+        const category = await this.categoryService.remove(id)
+
+        if (category) {
+            return res.status(HttpStatus.OK).json({ message: 'Category FindOne Successfully!' })
+        }
+
+        return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad Request. Please try again!' })   
     }
 }

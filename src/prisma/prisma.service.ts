@@ -6,7 +6,9 @@ import slugify from 'slugify'
 export class PrismaService extends PrismaClient implements OnModuleInit {
     async onModuleInit() {
         this.$use(async (params, next) => {
-            if((params.action === 'create' || params.action === 'update') && ['Category'].includes(params.model as string)) {
+            const Services = ['Category']
+
+            if((params.action === 'create' || params.action === 'update') && Services.includes(params.model as string)) {
                 const { args:{ data } } = params
         
                 data.slug = slugify(`${data.name}`, {
@@ -14,6 +16,11 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
                     strict: true,
                     remove: /[*+~.()'"!:@]/g 
                 })
+            }
+
+            if ((params.action === 'delete' && Services.includes(params.model as string))) {
+                params.action = 'update'
+                params.args['data'] = { deleted_flg: true }
             }
         
             const result = await next(params)

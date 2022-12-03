@@ -14,7 +14,7 @@ export class CreateCategoryDto {
     @IsNotEmpty()
     @IsString()
     @MinLength(3)
-    @MaxLength(50)
+    @MaxLength(30)
     @ApiProperty()
         name: string
 
@@ -68,4 +68,7 @@ export class CreateCategoryDto {
     @MaxLength(160)
     @ApiProperty({ required: false })
         metaDescription?: string
+
+    @ApiProperty({ required: false })
+        delete_flg?: boolean
 }

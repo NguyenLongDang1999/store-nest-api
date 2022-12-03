@@ -17,6 +17,9 @@ export class CategoryService {
             take: Number(query.rows) || 10,
             skip: Number(query.first) || 0,
             orderBy: { created_at: 'desc' },
+            where: {
+                deleted_flg: false
+            },
             select: {
                 id: true,
                 name: true,
@@ -52,7 +55,7 @@ export class CategoryService {
         })
     }
 
-    remove(id: number) {
-        return `This action removes a #${id} category`
+    async remove(id: string) {
+        return await this.prisma.category.delete({ where: { id } })
     }
 }
