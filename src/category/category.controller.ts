@@ -13,6 +13,12 @@ export class CategoryController {
         @Body() createCategoryDto: CreateCategoryDto,
         @Res() res: Response
     ) {
+        const findExistsSlug = await this.categoryService.findExistsSlug(createCategoryDto.slug)
+
+        if (findExistsSlug) {
+            return res.status(HttpStatus.CONFLICT).json({ message: 'Category is Exists. Please try again!' })
+        }
+
         const category = await this.categoryService.create(createCategoryDto)
 
         if (category) {
@@ -66,10 +72,16 @@ export class CategoryController {
             return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Category is invalid. Please try again!' })    
         }
 
+        const findExistsSlug = await this.categoryService.findExistsSlug(updateCategoryDto.slug, id)
+
+        if (findExistsSlug) {
+            return res.status(HttpStatus.CONFLICT).json({ message: 'Category is Exists. Please try again!' })
+        }
+
         const category = await this.categoryService.update(id, updateCategoryDto)
 
         if (category) {
-            return res.status(HttpStatus.OK).json({ message: 'Category Updated Successfully!' })
+            return res.status(HttpStatus.NO_CONTENT).json({ message: 'Category Updated Successfully!' })
         }
 
         return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad Request. Please try again!' })
@@ -83,7 +95,7 @@ export class CategoryController {
         const category = await this.categoryService.remove(id)
 
         if (category) {
-            return res.status(HttpStatus.OK).json({ message: 'Category FindOne Successfully!' })
+            return res.status(HttpStatus.NO_CONTENT).json({ message: 'Category FindOne Successfully!' })
         }
 
         return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad Request. Please try again!' })   

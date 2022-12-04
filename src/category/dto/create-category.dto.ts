@@ -18,21 +18,20 @@ export class CreateCategoryDto {
     @ApiProperty()
         name: string
 
+    @IsNotEmpty()
+    @IsString()
     @ApiProperty()
         slug: string
 
-    @IsEmpty()
     @IsOptional()
     @ApiProperty({ required: false })
         parent_id?: string
     
-    @IsEmpty()
     @IsOptional()
     @MaxLength(160)
     @ApiProperty({ required: false })
         description?: string
 
-    @IsEmpty()
     @IsOptional()
     @ApiProperty({ required: false })
         image_uri?: string
@@ -51,19 +50,16 @@ export class CreateCategoryDto {
     @ApiProperty({ required: false, default: false })
         publish?: boolean = false
 
-    @IsEmpty()
     @IsOptional()
     @MaxLength(160)
     @ApiProperty({ required: false })
         metaTitle?: string
 
-    @IsEmpty()
     @IsOptional()
     @MaxLength(160)
     @ApiProperty({ required: false })
         metaKeyword?: string
 
-    @IsEmpty()
     @IsOptional()
     @MaxLength(160)
     @ApiProperty({ required: false })

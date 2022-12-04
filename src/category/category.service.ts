@@ -23,10 +23,14 @@ export class CategoryService {
             select: {
                 id: true,
                 name: true,
+                slug: true,
                 status: true,
                 popular: true,
                 publish: true,
                 image_uri: true,
+                meta_title: true,
+                meta_keyword: true,
+                meta_description: true,
                 parentCategory: {
                     select: {
                         id: true,
@@ -46,6 +50,16 @@ export class CategoryService {
 
     async findOne(id: string) {
         return await this.prisma.category.findUnique({ where: { id } })    
+    }
+
+    async findExistsSlug(slug: string, id?: string) {
+        const params = { slug }
+        
+        if (id) {
+            params['id'] = { not: id }
+        }
+        
+        return await this.prisma.category.count({  where: params })
     }
 
     async update(id: string, updateCategoryDto: UpdateCategoryDto) {
