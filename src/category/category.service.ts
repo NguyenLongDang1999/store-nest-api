@@ -1,4 +1,4 @@
-import { Paginator } from '../utils/interface'
+import { CategorySearch } from '../utils/interface'
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreateCategoryDto } from './dto/create-category.dto'
@@ -12,25 +12,28 @@ export class CategoryService {
         return await this.prisma.category.create({ data: createCategoryDto })
     }
 
-    async findAll(query?: Paginator) {
+    async findAll(query?: CategorySearch) {
+        const where = {
+            deleted_flg: false,
+            name: { contains: query.search?.name },
+            parent_id: { equals: query.search?.parent_id },
+            status: { equals: Number(query.search?.status) || undefined },
+            popular: { equals: Number(query.search?.popular) || undefined }
+        }
+        
         const data = await this.prisma.category.findMany({
-            take: Number(query.rows) || 10,
-            skip: Number(query.first) || 0,
+            take: Number(query.pageSize),
+            skip: Number(query.page),
             orderBy: { created_at: 'desc' },
-            where: {
-                deleted_flg: false
-            },
+            where: where,
             select: {
                 id: true,
                 name: true,
-                slug: true,
                 status: true,
                 popular: true,
-                publish: true,
                 image_uri: true,
-                meta_title: true,
-                meta_keyword: true,
-                meta_description: true,
+                created_at: true,
+                updated_at: true,
                 parentCategory: {
                     select: {
                         id: true,
@@ -40,7 +43,10 @@ export class CategoryService {
             }
         })
 
-        const aggregations = await this.prisma.category.aggregate({ _count: true })
+        const aggregations = await this.prisma.category.aggregate({
+            where: where,
+            _count: true
+        })
         
         return {
             data,
@@ -49,7 +55,36 @@ export class CategoryService {
     }
 
     async findOne(id: string) {
-        return await this.prisma.category.findUnique({ where: { id } })    
+        return await this.prisma.category.findUnique({ 
+            where: { id },
+            select: {
+                id: true,
+                name: true,
+                slug: true,
+                parent_id: true,
+                description: true,
+                status: true,
+                popular: true,
+                image_uri: true,
+                meta_title: true,
+                meta_keyword: true,
+                meta_description: true
+            }
+        })
+    }
+
+    async fetchCategoryData() {
+        return await this.prisma.category.findMany({
+            orderBy: { created_at: 'desc' },
+            where: {
+                deleted_flg: false,
+                parent_id: null
+            },
+            select: {
+                id: true,
+                name: true
+            }
+        })
     }
 
     async findExistsSlug(slug: string, id?: string) {

@@ -3,6 +3,7 @@ import { Response } from 'express'
 import { CategoryService } from './category.service'
 import { CreateCategoryDto } from './dto/create-category.dto'
 import { UpdateCategoryDto } from './dto/update-category.dto'
+import { CategorySearch } from './../utils/interface'
 
 @Controller('category')
 export class CategoryController {
@@ -31,15 +32,26 @@ export class CategoryController {
     @Get()
     async findAll(
         @Res() res: Response,
-        @Query('lazyEvent') lazyEvent?: string,
+        @Query() params?: CategorySearch,
     ) {
-        const parseQuery = lazyEvent ? JSON.parse(lazyEvent as string) : ''
-        const { data, aggregations } = await this.categoryService.findAll(parseQuery)
+        const { page, pageSize, search } = params
+        const payload = {
+            page: page * pageSize,
+            pageSize,
+            search
+        }
+
+        const { data, aggregations } = await this.categoryService.findAll(payload)
 
         return res.status(HttpStatus.OK).json({
             data,
             aggregations
         })
+    }
+
+    @Get('fetch-category')
+    async fetchCategoryData() {
+        return await this.categoryService.fetchCategoryData()
     }
 
     @Get(':id')
@@ -50,7 +62,7 @@ export class CategoryController {
         const category = await this.categoryService.findOne(id)
 
         if (category) {
-            return res.status(HttpStatus.OK).json({ message: 'Category FindOne Successfully!' })
+            return res.status(HttpStatus.OK).json(category)
         }
 
         return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad Request. Please try again!' })   

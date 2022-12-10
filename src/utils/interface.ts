@@ -1,6 +1,6 @@
 export interface Paginator {
-    rows?: number
-    first?: number
+    page?: number
+    pageSize?: number
 }
 
 export interface CategoryList {
@@ -13,5 +13,13 @@ export interface CategoryList {
     parentCategory: {
         id: string
         name: string
+    }
+}
+export interface CategorySearch extends Paginator {
+    search?: {
+        name?: string
+        parent_id?: string
+        status?: number
+        popular?: number
     }
 }
