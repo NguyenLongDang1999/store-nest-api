@@ -23,3 +23,11 @@ export interface CategorySearch extends Paginator {
         popular?: number
     }
 }
+
+export interface AdminSearch extends Paginator {
+    search?: {
+        name?: string
+        phone?: string
+        email?: string
+    }
+}

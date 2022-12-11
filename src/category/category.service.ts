@@ -94,7 +94,7 @@ export class CategoryService {
             params['id'] = { not: id }
         }
         
-        return await this.prisma.category.count({  where: params })
+        return await this.prisma.category.count({ where: params })
     }
 
     async update(id: string, updateCategoryDto: UpdateCategoryDto) {

@@ -107,7 +107,7 @@ export class CategoryController {
         const category = await this.categoryService.remove(id)
 
         if (category) {
-            return res.status(HttpStatus.NO_CONTENT).json({ message: 'Category FindOne Successfully!' })
+            return res.status(HttpStatus.NO_CONTENT).json({ message: 'Category Remove Successfully!' })
         }
 
         return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad Request. Please try again!' })   

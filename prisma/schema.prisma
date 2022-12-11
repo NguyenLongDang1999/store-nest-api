@@ -1,31 +1,42 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "postgresql"
-    url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Category {
-    id               String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-    name             String     @db.VarChar(50)
-    slug             String     @unique @db.VarChar(100)
-    parent_id        String?    @db.Uuid
-    parentCategory   Category?  @relation("CategoryToCategory", fields: [parent_id], references: [id])
-    Category         Category[] @relation("CategoryToCategory")
-    image_uri        String?    @db.VarChar(255)
-    description      String?    @db.VarChar(160)
-    status           Int?       @default(1) @db.SmallInt
-    popular          Int?       @default(2) @db.SmallInt
-    publish          Boolean?   @default(false)
-    meta_title       String?    @db.VarChar(60)
-    meta_keyword     String?    @db.VarChar(60)
-    meta_description String?    @db.VarChar(160)
-    created_at       DateTime   @default(now())
-    updated_at       DateTime   @updatedAt
-    deleted_flg      Boolean    @default(false)
+  id               String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name             String     @db.VarChar(50)
+  slug             String     @unique @db.VarChar(100)
+  parent_id        String?    @db.Uuid
+  image_uri        String?    @db.VarChar(255)
+  description      String?    @db.VarChar(160)
+  status           Int?       @default(1) @db.SmallInt
+  popular          Int?       @default(2) @db.SmallInt
+  publish          Boolean?   @default(false)
+  meta_title       String?    @db.VarChar(60)
+  meta_keyword     String?    @db.VarChar(60)
+  meta_description String?    @db.VarChar(160)
+  created_at       DateTime   @default(now())
+  updated_at       DateTime   @updatedAt
+  deleted_flg      Boolean    @default(false)
+  parentCategory   Category?  @relation("CategoryToCategory", fields: [parent_id], references: [id])
+  Category         Category[] @relation("CategoryToCategory")
+}
+
+model Admins {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String   @db.VarChar(100)
+  email       String   @db.VarChar(100)
+  password    String   @db.VarChar(100)
+  phone       String?  @db.VarChar(20)
+  token       String?  @db.VarChar(255)
+  role        Int      @db.SmallInt
+  image_uri   String?  @db.VarChar(255)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  deleted_flg Boolean  @default(false)
 }
