@@ -43,10 +43,12 @@ export class CategoryService {
             }
         })
 
-        const aggregations = await this.prisma.category.aggregate({
+        const totalPage = await this.prisma.category.aggregate({
             where: where,
             _count: true
         })
+
+        const aggregations = Math.ceil(totalPage._count / query.pageSize) || 1
         
         return {
             data,
@@ -105,6 +107,9 @@ export class CategoryService {
     }
 
     async remove(id: string) {
-        return await this.prisma.category.delete({ where: { id } })
+        return await this.prisma.category.update({
+            where: { id },
+            data: { deleted_flg: true }
+        })
     }
 }

@@ -36,7 +36,7 @@ export class CategoryController {
     ) {
         const { page, pageSize, search } = params
         const payload = {
-            page: page * pageSize,
+            page: (page - 1) * pageSize,
             pageSize,
             search
         }
@@ -99,7 +99,7 @@ export class CategoryController {
         return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad Request. Please try again!' })
     }
 
-    @Delete(':id')
+    @Patch('delete/:id')
     async remove(
         @Param('id') id: string,
         @Res() res: Response

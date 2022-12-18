@@ -50,12 +50,12 @@ export class CreateCategoryDto {
         publish?: boolean = false
 
     @IsOptional()
-    @MaxLength(160)
+    @MaxLength(60)
     @ApiProperty({ required: false })
         metaTitle?: string
 
     @IsOptional()
-    @MaxLength(160)
+    @MaxLength(60)
     @ApiProperty({ required: false })
         metaKeyword?: string
 
