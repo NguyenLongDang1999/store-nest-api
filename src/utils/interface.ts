@@ -16,12 +16,10 @@ export interface CategoryList {
     }
 }
 export interface CategorySearch extends Paginator {
-    search?: {
-        name?: string
-        parent_id?: string
-        status?: number
-        popular?: number
-    }
+    name?: string
+    parent_id?: string
+    status?: number
+    popular?: number
 }
 
 export interface AdminSearch extends Paginator {

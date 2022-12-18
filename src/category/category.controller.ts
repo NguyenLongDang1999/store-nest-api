@@ -34,11 +34,13 @@ export class CategoryController {
         @Res() res: Response,
         @Query() params?: CategorySearch,
     ) {
-        const { page, pageSize, search } = params
         const payload = {
-            page: (page - 1) * pageSize,
-            pageSize,
-            search
+            page: (params.page - 1) * params.pageSize,
+            pageSize: params.pageSize,
+            name: params.name,
+            parent_id: params.parent_id,
+            status: params.status,
+            popular: params.popular
         }
 
         const { data, aggregations } = await this.categoryService.findAll(payload)

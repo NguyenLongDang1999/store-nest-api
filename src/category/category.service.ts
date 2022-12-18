@@ -15,10 +15,10 @@ export class CategoryService {
     async findAll(query?: CategorySearch) {
         const where = {
             deleted_flg: false,
-            name: { contains: query.search?.name },
-            parent_id: { equals: query.search?.parent_id },
-            status: { equals: Number(query.search?.status) || undefined },
-            popular: { equals: Number(query.search?.popular) || undefined }
+            name: { contains: query?.name || undefined },
+            parent_id: { equals: query?.parent_id || undefined },
+            status: { equals: Number(query?.status) || undefined },
+            popular: { equals: Number(query?.popular) || undefined }
         }
         
         const data = await this.prisma.category.findMany({
@@ -37,7 +37,8 @@ export class CategoryService {
                 parentCategory: {
                     select: {
                         id: true,
-                        name: true
+                        name: true,
+                        image_uri: true
                     }
                 }
             }
