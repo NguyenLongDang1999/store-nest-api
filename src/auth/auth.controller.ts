@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Res, HttpStatus } from '@nestjs/common'
+import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common'
 import { AuthService } from './auth.service'
 import { Response } from 'express'
 import { comparePassword, randomString, getJWT } from 'src/utils/funcs'
@@ -25,13 +25,13 @@ export class AuthController {
         const admins = await this.authService.findOneLogin(data.email)
 
         if (!admins) {
-            return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Admins not found. Please try again!' })
+            return res.status(HttpStatus.FORBIDDEN).json({ message: 'Admins not found. Please try again!' })
         }
 
         const matchPassword = await comparePassword(data.password, admins.password)
 
         if (!matchPassword) {
-            return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Password is incorrect. Please try again!' })
+            return res.status(HttpStatus.FORBIDDEN).json({ message: 'Password is incorrect. Please try again!' })
         }
 
         const refresh_token = randomString(50)
@@ -53,7 +53,7 @@ export class AuthController {
         return res.status(HttpStatus.OK).json({
             data: {
                 'access_token': getAdmins.access_token,
-                'id': getAdmins.id,
+                'admins': admins,
                 'exp_time': getAdmins.exp_time
             },
             message: 'success'

@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt'
-import { CONSTANTS } from 'src/utils/constants'
-import { sign } from 'jsonwebtoken'
+import { CONSTANTS, JWT_KEY } from 'src/utils/constants'
+import { sign, verify } from 'jsonwebtoken'
 
 export const encodePassword = (password: string) => {
     return bcrypt.hash(password, CONSTANTS.SALT_ROUNDS)
@@ -23,18 +23,28 @@ export const randomString = (length = 50) => {
 }
 
 export const getJWT = (user, exp_time = CONSTANTS.ACCESS_TOKEN_EXP_TIME) => {
-    if (user && user.id && user.role && user.name) {
+    if (user && user.id) {
         const claim = {
             'id': user.id,
-            'name': user.name,
-            'role': user.role,
+            // 'name': user.name,
+            // 'role': user.role,
             'avatar': user.image_uri,
             'iat': Math.round(new Date().getTime() / 1000) - CONSTANTS.ONE_HOUR, //dat note: -1 hours, work around for bug JWTIssuedAtFuture
             'exp': Math.round(new Date().getTime() / 1000) + exp_time
         }
 
-        return sign(claim, 'vietnamvodich')
+        return sign(claim, JWT_KEY)
     } else {
+        return false
+    }
+}
+
+export const decodeJWT = (token: string) => {
+    try {
+        const dataDecode = verify(token, JWT_KEY)
+        return dataDecode || false
+    } catch (error) {
+        console.error('JWT verify fail', error)
         return false
     }
 }

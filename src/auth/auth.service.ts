@@ -10,6 +10,9 @@ export class AuthService {
             where: { email, deleted_flg: false },
             select: {
                 id: true,
+                image_uri: true,
+                name: true,
+                role: true,
                 password: true
             }
         })

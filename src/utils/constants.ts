@@ -3,5 +3,6 @@ export enum CONSTANTS {
     ACCESS_TOKEN_EXP_TIME = 60 * 60,
     ONE_HOUR = 60 * 60,
     ONE_MONTH = 30 * 24 * 60 * 60 * 1000,
-    // JWT_KEY = process.env.JWT_KEY
 }
+
+export const JWT_KEY = process.env.JWT_KEY
