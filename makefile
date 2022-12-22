@@ -1,5 +1,8 @@
 dev:
-	pnpm run start:dev
+	yarn start:dev
 
 db:
-	pnpm prisma db push
+	yarn prisma db push
+
+lint:
+	yarn lint

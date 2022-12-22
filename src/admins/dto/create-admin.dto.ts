@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
 import {
-    IsBoolean,
     IsNotEmpty,
     IsString,
     IsNumber,
@@ -30,19 +29,20 @@ export class CreateAdminDto {
     @ApiProperty()
         password: string
 
+    @IsNotEmpty()
+    @IsString()
+    @MaxLength(20)
+    @ApiProperty()
+        phone: string
+
     @IsOptional()
     @ApiProperty({ required: false })
-        token?: string
+        refresh_token?: string
 
     @IsNotEmpty()
     @IsNumber()    
     @ApiProperty()
         role: number
-
-    @IsOptional()
-    @MaxLength(160)
-    @ApiProperty({ required: false })
-        description?: string
 
     @IsOptional()
     @ApiProperty({ required: false })

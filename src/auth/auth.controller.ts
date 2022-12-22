@@ -1,62 +1,25 @@
-import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common'
+import { Controller, Get, Post, Body, Req } from '@nestjs/common'
 import { AuthService } from './auth.service'
-import { Response } from 'express'
-import { comparePassword, randomString, getJWT } from 'src/utils/funcs'
-import { CONSTANTS } from 'src/utils/constants'
-
-interface Login {
-  email: string
-  password: string
-}
+import { CreateAuthDto } from './dto/create-auth.dto'
+import { UpdateAuthDto } from './dto/update-auth.dto'
+import { Request } from 'express'
 
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
-    @Post('login')
-    async login(
-        @Body() data: Login,
-        @Res() res: Response
-    ) {
-        if (!data.email || !data.password) {
-            return res.status(HttpStatus.BAD_REQUEST).json({ message: 'Bad Request. Please try again!' })
-        }
+    @Post('signup')
+    signUp(@Body() createAuthDto: CreateAuthDto) {
+        // return this.authService.signUp(createAuthDto)
+    }
 
-        const admins = await this.authService.findOneLogin(data.email)
+    @Post('signin')
+    signIn(@Body() data: CreateAuthDto) {
+        return this.authService.signIn(data)
+    }
 
-        if (!admins) {
-            return res.status(HttpStatus.FORBIDDEN).json({ message: 'Admins not found. Please try again!' })
-        }
-
-        const matchPassword = await comparePassword(data.password, admins.password)
-
-        if (!matchPassword) {
-            return res.status(HttpStatus.FORBIDDEN).json({ message: 'Password is incorrect. Please try again!' })
-        }
-
-        const refresh_token = randomString(50)
-        
-        const getAdmins = {
-            ...admins,
-            refresh_token: refresh_token,
-            access_token: getJWT(admins),
-            exp_time: CONSTANTS.ACCESS_TOKEN_EXP_TIME
-        }
-
-        res.cookie('ELRT', getAdmins.refresh_token, {
-            httpOnly: process.env.ENV == 'production' ? true : false,
-            sameSite: process.env.ENV == 'production' ? true : false,
-            secure: process.env.ENV == 'production' ? true : false,
-            maxAge: CONSTANTS.ONE_MONTH
-        })
-
-        return res.status(HttpStatus.OK).json({
-            data: {
-                'access_token': getAdmins.access_token,
-                'admins': admins,
-                'exp_time': getAdmins.exp_time
-            },
-            message: 'success'
-        })
+    @Get('logout')
+    logout(@Req() req: Request) {
+        this.authService.logout(req.user['sub'])
     }
 }

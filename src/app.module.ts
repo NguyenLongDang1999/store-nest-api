@@ -2,7 +2,7 @@
 import { CategoryController } from './category/category.controller'
 
 // ** Middleware Imports
-import { AuthMiddleware } from './auth/auth.middleware'
+// import { AuthMiddleware } from './auth/auth.middleware'
 
 // ** NestJS Imports
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common'
@@ -15,6 +15,7 @@ import { CategoryModule } from './category/category.module'
 import { PrismaModule } from './prisma/prisma.module'
 import { AdminsModule } from './admins/admins.module'
 import { AuthModule } from './auth/auth.module'
+// import { AuthModule } from './auth/auth.module'
 
 @Module({
     imports: [
@@ -29,10 +30,12 @@ import { AuthModule } from './auth/auth.module'
     providers: [AppService]
 })
 
-export class AppModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {
-        consumer
-            .apply(AuthMiddleware)
-            .forRoutes(CategoryController)
-    }
-}
+// export class AppModule implements NestModule {
+//     configure(consumer: MiddlewareConsumer) {
+//         consumer
+//             .apply(AuthMiddleware)
+//             .forRoutes(CategoryController)
+//     }
+// }
+
+export class AppModule {}
